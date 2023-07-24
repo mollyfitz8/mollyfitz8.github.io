@@ -1,0 +1,92 @@
+<html>
+<head>
+  <title>Invoice Form with Remove Item Button</title>
+</head>
+<body>
+  <h1>Invoice Form</h1>
+  <form action="#" method="post" id="invoiceForm">
+    <label for="clientName">From:</label>
+    <input type="text" id="clientName" name="clientName" required><br>
+
+
+    <label for="invoiceDate">Invoice Date:</label>
+    <input type="date" id="invoiceDate" name="invoiceDate" required><br>
+
+     <label for="billto">Bill To:</label>
+    <input type="text" id="billto" name="billto" required><br>
+
+
+    <hr>
+    <h3>Item Details</h3>
+
+    <div id="itemsContainer">
+      <div class="item">
+        <label for="itemDescription">Description:</label>
+        <input type="text" name="itemDescription[]" required>
+
+        <label for="quantity">Quantity:</label>
+        <input type="number" name="quantity[]" required>
+
+        <label for="unitPrice">Unit Price:</label>
+        <input type="number" step="0.01" name="unitPrice[]" required>
+        
+        <button type="button" onclick="removeItem(this)">Remove Item</button>
+      </div>
+    </div>
+
+    <button type="button" onclick="addNewItem()">Add Item</button>
+
+    <hr>
+    <label for="total">Total:</label>
+    <input type="number" step="0.01" id="total" name="total" readonly><br>
+
+    <button type="submit">Submit Invoice</button>
+
+    <script>
+      function calculateTotal() {
+        const itemContainers = document.getElementsByClassName('item');
+        let total = 0;
+
+        for (let i = 0; i < itemContainers.length; i++) {
+          const quantity = parseFloat(itemContainers[i].querySelector('input[name="quantity[]"]').value);
+          const unitPrice = parseFloat(itemContainers[i].querySelector('input[name="unitPrice[]"]').value);
+
+          if (!isNaN(quantity) && !isNaN(unitPrice)) {
+            total += quantity * unitPrice;
+          }
+        }
+
+        document.getElementById('total').value = total.toFixed(2);
+      }
+
+      function addNewItem() {
+        const itemsContainer = document.getElementById('itemsContainer');
+        const newItemHtml = `
+          <div class="item">
+            <label for="itemDescription">Description:</label>
+            <input type="text" name="itemDescription[]" required>
+
+            <label for="quantity">Quantity:</label>
+            <input type="number" name="quantity[]" required>
+
+            <label for="unitPrice">Unit Price:</label>
+            <input type="number" step="0.01" name="unitPrice[]" required>
+            
+            <button type="button" onclick="removeItem(this)">Remove Item</button>
+          </div>
+        `;
+        itemsContainer.insertAdjacentHTML('beforeend', newItemHtml);
+      }
+
+      function removeItem(button) {
+        const itemDiv = button.parentElement;
+        itemDiv.remove();
+        calculateTotal();
+      }
+
+      // Listen for input changes on the form level
+      document.getElementById('invoiceForm').addEventListener('input', calculateTotal);
+    </script>
+  </form>
+</body>
+</html>
